@@ -1,10 +1,10 @@
-# Проект по DovOps
+# Проект по DevOps
 
 ## Как запустить
 
 Скопируйте пример файла конфигурации Terraform и заполните переменные для доступа к облачному сервису Yandex.
 
-``` bash
+```bash
 $ cp terraform/terraform.tfvars.example terraform/terraform.tfvars
 $ cat terraform/terraform.tfvars
 yandex_token = ""

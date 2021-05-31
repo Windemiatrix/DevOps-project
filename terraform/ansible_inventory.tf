@@ -2,13 +2,13 @@ resource "local_file" "AnsibleInventory" {
   content  = <<EOT
 [all]
 %{for node in yandex_compute_instance.master.*~}
-${node.name} ansible_host=${node.network_interface.0.nat_ip_address} ip=${node.network_interface.0.ip_address} access_ip=${node.network_interface.0.nat_ip_address} ansible_user=${var.vm_user} ansible_ssh_common_args='-o StrictHostKeyChecking=no' ansible_python_interpreter='python3'
+${node.name} ansible_host=${node.network_interface.0.nat_ip_address} ip=${node.network_interface.0.ip_address} access_ip=${node.network_interface.0.ip_address} ansible_user=${var.vm_user} ansible_ssh_common_args='-o StrictHostKeyChecking=no' ansible_python_interpreter='python3'
 %{endfor~}
 %{for node in yandex_compute_instance.worker.*~}
-${node.name} ansible_host=${node.network_interface.0.nat_ip_address} ip=${node.network_interface.0.ip_address} access_ip=${node.network_interface.0.nat_ip_address} ansible_user=${var.vm_user} ansible_ssh_common_args='-o StrictHostKeyChecking=no' ansible_python_interpreter='python3'
+${node.name} ansible_host=${node.network_interface.0.nat_ip_address} ip=${node.network_interface.0.ip_address} access_ip=${node.network_interface.0.ip_address} ansible_user=${var.vm_user} ansible_ssh_common_args='-o StrictHostKeyChecking=no' ansible_python_interpreter='python3'
 %{endfor~}
 %{for node in yandex_compute_instance.ingress.*~}
-${node.name} ansible_host=${node.network_interface.0.nat_ip_address} ip=${node.network_interface.0.ip_address} access_ip=${node.network_interface.0.nat_ip_address} ansible_user=${var.vm_user} ansible_ssh_common_args='-o StrictHostKeyChecking=no' ansible_python_interpreter='python3'
+${node.name} ansible_host=${node.network_interface.0.nat_ip_address} ip=${node.network_interface.0.ip_address} access_ip=${node.network_interface.0.ip_address} ansible_user=${var.vm_user} ansible_ssh_common_args='-o StrictHostKeyChecking=no' ansible_python_interpreter='python3'
 %{endfor~}
 
 [kube_control_plane]

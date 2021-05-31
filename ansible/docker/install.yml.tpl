@@ -4,7 +4,6 @@
 
   tasks:
     - name: Update and upgrade apt packages
-      become: true
       apt:
         upgrade: yes
         update_cache: yes
@@ -45,9 +44,24 @@
       notify:
         - docker status
 
-    - name: Add ubuntu user to docker group
+    - name: Prevent docker-ce from being updated
+      dpkg_selections:
+        name: docker-ce
+        selection: hold
+
+    - name: Prevent docker-ce-cli from being updated
+      dpkg_selections:
+        name: docker-ce-cli
+        selection: hold
+
+    - name: Prevent containerd.io from being updated
+      dpkg_selections:
+        name: containerd.io
+        selection: hold
+
+    - name: Add ${username} user to docker group
       user:
-        name: ubuntu
+        name: ${username}
         group: docker
 
     - name: Remove swapfile from /etc/fstab

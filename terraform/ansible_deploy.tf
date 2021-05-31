@@ -6,6 +6,7 @@ resource "null_resource" "deploy_docker" {
     yandex_compute_instance.master,
     yandex_compute_instance.worker,
     yandex_compute_instance.ingress,
+    local_file.docker,
     local_file.AnsibleInventory
   ]
 }

@@ -40,6 +40,12 @@ vm_Ingress_disk = 3
 
 > Инструкции по взаимодействию Terraform и Yandex Cloud подробно описаны на странице [официальной документации](https://cloud.yandex.ru/docs/solutions/infrastructure-management/terraform-quickstart) Yandex.
 
+Также необходимо установить зависимости, необходимые для работы Kubespray:
+
+``` bash
+sudo pip3 install -r ansible/kubespray/requirements.txt
+```
+
 Далее перейдите в директорию с Terraform, выполните его инициализацию и запустите сценарий:
 
 ```bash

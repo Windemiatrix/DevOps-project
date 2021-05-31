@@ -10,3 +10,15 @@ resource "null_resource" "deploy_docker" {
     local_file.AnsibleInventory
   ]
 }
+
+resource "null_resource" "deploy_kubernetes" {
+  provisioner "local-exec" {
+    command = "ansible-playbook -b ../ansible/kubespray/cluster.yml"
+  }
+  depends_on = [
+    null_resource.deploy_docker,
+    local_file.docker,
+    local_file.AnsibleInventory
+  ]
+}
+

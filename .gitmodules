@@ -1,4 +1,7 @@
-[submodule "ansible/kubespray"]
-	path = ansible/kubespray
+[submodule "01-packer/packer-virt-sysprep"]
+	path = 01-packer/packer-virt-sysprep
+	url = https://github.com/DanHam/packer-virt-sysprep.git
+[submodule "02-ansible/kubespray"]
+	path = 02-ansible/kubespray
 	url = https://github.com/kubernetes-sigs/kubespray.git
 	branch = release-2.16

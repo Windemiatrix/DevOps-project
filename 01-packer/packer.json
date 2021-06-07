@@ -1,0 +1,66 @@
+{
+    "builders": [
+        {
+            "boot_command": [
+                "<enter><enter><f6><esc><wait> ",
+                "autoinstall ds=nocloud-net;seedfrom=http://{{ .HTTPIP }}:{{ .HTTPPort }}/",
+                "<enter><wait>"
+            ],
+            "boot_wait": "5s",
+            "cpus": "{{user `vm-cpu-num`}}",
+            "disk_size": "{{ user `vm-disk-size`}}",
+            "disk_type_id": "0",
+            "format": "ova",
+            "guest_os_type": "ubuntu-64",
+            "http_directory": "http",
+            "insecure_connection": "true",
+            "iso_checksum": "{{user `iso-checksum-type`}}:{{user `iso-checksum`}}",
+            "iso_urls": "{{user `iso-url`}}",
+            "memory": "{{user `vm-mem-size`}}",
+            "ssh_handshake_attempts": "20",
+            "ssh_password": "ubuntu",
+            "ssh_pty": true,
+            "ssh_timeout": "30m",
+            "ssh_username": "ubuntu",
+            "type": "vmware-iso",
+            "vm_name": "{{user `vm-name`}}-{{user `vm-disk-size`}}Mb"
+        }
+    ],
+    "provisioners": [
+        {
+            "inline": [
+                "sudo sh -c \"echo 'disable_vmware_customization: false' >> /etc/cloud/cloud.cfg\"",
+                "sudo sh -c \"echo 'log = true' >> /etc/vmware-tools/tools.conf\"",
+                "sudo rm -rf /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg",
+                "sudo rm -rf /etc/cloud/cloud.cfg.d/99-installer.cfg",
+                "sudo rm -rf /etc/netplan/50-cloud-init.yaml",
+                "sudo sed -i 's/preserve_hostname: false/preserve_hostname: true/g' /etc/cloud/cloud.cfg",
+                "sudo truncate -s0 /etc/hostname",
+                "sudo hostnamectl set-hostname localhost",
+                "sudo apt-get purge cloud-init --yes",
+                "sudo apt-get autoremove --purge --yes"
+            ],
+            "type": "shell"
+        },
+        {
+            "type": "shell",
+            "execute_command": "{{ .Vars }} sudo $(command -v bash) '{{.Path }}'",
+            "scripts": [
+                "./packer-virt-sysprep/sysprep-op-bash-history.sh",
+                "./packer-virt-sysprep/sysprep-op-cloud-init.sh",
+                "./packer-virt-sysprep/sysprep-op-crash-data.sh",
+                "./packer-virt-sysprep/sysprep-op-dhcp-client-state.sh",
+                "./packer-virt-sysprep/sysprep-op-firewall-rules.sh",
+                "./packer-virt-sysprep/sysprep-op-logfiles.sh",
+                "./packer-virt-sysprep/sysprep-op-machine-id.sh",
+                "./packer-virt-sysprep/sysprep-op-mail-spool.sh",
+                "./packer-virt-sysprep/sysprep-op-package-manager-cache.sh",
+                "./packer-virt-sysprep/sysprep-op-package-manager-db.sh",
+                "./packer-virt-sysprep/sysprep-op-ssh-hostkeys.sh",
+                "./packer-virt-sysprep/sysprep-op-tmp-files.sh"
+            ],
+            "pause_before": "10s",
+            "timeout": "10s"
+        }
+    ]
+}

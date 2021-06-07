@@ -1,56 +1,35 @@
-# Проект по DevOps
+# Pet проект для закрепления навыков
 
-Проект подготовлен для использования в облачном сервисе Yandex Cloud.
+Проект предназначен для архитектуры на базе VmWare Workstation.
 
-## Как запустить
+## Подготовка инфраструктуры
 
-Скопируйте пример файла конфигурации Terraform и заполните переменные для доступа к облачному сервису Yandex.
+Потребуется создать шаблон виртуальной машины на базе `Ubuntu`:
 
-```bash
-$ cp terraform/terraform.tfvars.example terraform/terraform.tfvars
-$ cat terraform/terraform.tfvars
-yandex_token = ""
-yandex_cloud_id = ""
-yandex_folder_id = ""
-yandex_zone = ""
-
-vm_name = "" # Префикс названия ВМ
-vm_image_id = "" # ID образа ВМ (берется из Яндекса)
-
-vm_user = "" # Пользователь в ВМ (по умолчанию ubuntu)
-vm_ssh_keyfile = "" # Путь до публичного ключа RSA (по умолчанию ~/.ssh/id_rsa.pub)
-vm_ssh_keyfile_private = "" # Путь до приватного ключа RSA (по умолчанию ~/.ssh/id_rsa)
-
-# Характеристики для создаваемых ВМ
-vm_MasterNode_count = 3
-vm_MasterNode_cores = 2
-vm_MasterNode_memory = 4
-vm_MasterNode_disk = 10
-
-vm_WorkerNode_count = 2
-vm_WorkerNode_cores = 2
-vm_WorkerNode_memory = 4
-vm_WorkerNode_disk = 20
-
-vm_Ingress_count = 1
-vm_Ingress_cores = 2
-vm_Ingress_memory = 2
-vm_Ingress_disk = 3
+``` packer
+$ cd 01-packer
+$ cp variables.json.example variables.json
+$ cat variables.json
+{
+    "vm-name": "Ubuntu-20.04-LTS",
+    "vm-cpu-num": "2",
+    "vm-mem-size": "2048",
+    "vm-disk-size": "10240",
+    "iso-url": "http://releases.ubuntu.com/20.04/ubuntu-20.04.2-live-server-amd64.iso",
+    "iso-checksum": "d1f2bf834bbe9bb43faf16f9be992a6f3935e65be0edece1dee2aa6eb1767423",
+    "iso-checksum-type": "sha256"
+}
+$ packer build -var-file variables.json packer.json
 ```
 
-> Инструкции по взаимодействию Terraform и Yandex Cloud подробно описаны на странице [официальной документации](https://cloud.yandex.ru/docs/solutions/infrastructure-management/terraform-quickstart) Yandex.
+В результате создания мы получим шаблон на базе `Ubuntu Server 20.04`, обновленный и подготовленный для дальнейшего использования при создании виртуальных машин. Учетные данные для авторизации - `ubuntu`/`ubuntu`. Крайне рекомендуется их поменять после создания виртуальной машины на базе созданного образа.
 
-Также необходимо установить зависимости, необходимые для работы Kubespray:
+Создадим 4 виртуальные машины: `Ingress`, `Master`, `Node-1`, `Node-2`.
+
+Теперь потребуется установить `Kubernetes`.
 
 ``` bash
-sudo pip3 install -r ansible/kubespray/requirements.txt
-```
-
-Далее перейдите в директорию с Terraform, выполните его инициализацию и запустите сценарий:
-
-```bash
-$ terraform init
-$ terraform plan
-$ terraform apply
-yes
+cd 02-ansible
+sudo pip install -r kubespray/requirements.txt
+ansible-playbook -b kubespray/cluster.yml
 ```

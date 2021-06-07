@@ -1,0 +1,37 @@
+#cloud-config
+autoinstall:
+  version: 1
+  identity:
+    hostname: ubuntu-server
+    password: "$6$exDY1mhS4KUYCE/2$zmn9ToZwTKLhCw.b4/b.ZRTIZM30JZ4QrOQ2aOXJ8yk96xpcCof0kxKwuX1kqLG/ygbJ1f8wxED22bTL4F46P0"
+    username: ubuntu
+  locale: ru_RU
+  early-commands:
+    - systemctl stop ssh
+  storage:
+    layout:
+      name: direct
+  apt:
+    primary:
+      - arches: [amd64]
+        uri: "http://ru.archive.ubuntu.com/ubuntu"
+      - arches: [default]
+        uri: "http://ports.ubuntu.com/ubuntu-ports"
+  ssh:
+    install-server: true
+  package_update: true
+  package_upgrade: true
+  packages:
+    - aptitude
+    - mc
+    - htop
+    - nload
+    - net-tools
+    - open-vm-tools
+    - sshpass
+  late-commands:
+    - echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu
+    - curtin in-target --target=/target -- chmod 440 /etc/sudoers.d/ubuntu
+    - curtin in-target --target=/target -- apt-get update
+    - curtin in-target --target=/target -- apt-get upgrade --yes
+    - curtin in-target --target=/target -- apt-get clean
